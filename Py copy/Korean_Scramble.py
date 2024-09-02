@@ -1,7 +1,6 @@
 import random
 import datetime
-from datetime import datetime
-from cryptography.fernet import Fernet  # Add this import statement for enhanced security
+
 
 # Cipher mapping according to the provided key
 cipher_mapping = {
@@ -228,30 +227,25 @@ if __name__ == "__main__":
                 scrambles = [entry for entry in scrambles if entry.strip()]
         except FileNotFoundError:
             print("No scrambles found.")
+        else:
+            # Sort the scrambles by the timestamp
+            scrambles.sort(key=lambda x: x.split(' - ')[1].strip())
 
-            if not scrambles:
-                print("No scrambles found.")
+            # Display the list of scrambles
+            print("\nSaved Scrambles:")
+            for i, entry in enumerate(scrambles):
+                timestamp = entry.split(' - ')[1].strip().split('\n')[0]
+                association = entry.split('**Association**: ')[1].split('\n')[0].strip()
+                print(f"{i + 1}. Saved on {timestamp} - Association: {association}")
+
+            # Get the user's choice
+            choice = int(input("\nSelect the number of the scramble to view: "))
+            if 1 <= choice <= len(scrambles):
+                selected_entry = scrambles[choice - 1]
+                encoded_scramble = selected_entry.split('`')[1]
+                print(f"Encoded Scramble: {encoded_scramble}")
             else:
-                # Sort the scrambles by the timestamp
-                scrambles.sort(key=lambda x: x.split(' - ')[1].strip())
-
-                # Display the list of scrambles
-                print("\nSaved Scrambles:")
-                for i, entry in enumerate(scrambles):
-                    timestamp = entry.split(' - ')[1].strip().split('\n')[0]
-                    association = entry.split('**Association**: ')[1].split('\n')[0].strip()
-                    print(f"{i + 1}. Saved on {timestamp} - Association: {association}")
-
-                # Get the user's choice
-                choice = int(input("\nSelect the number of the scramble to view: "))
-                if 1 <= choice <= len(scrambles):
-                    selected_entry = scrambles[choice - 1]
-                    encoded_scramble = selected_entry.split('`')[1]
-                    print(f"Encoded Scramble: {encoded_scramble}")
-                else:
-                    print("Invalid selection.")
-        except FileNotFoundError:
-            print("No scrambles found.")
+                print("Invalid selection.")
     elif action == 'c':
         clear_storage_file()
     elif action == 'x':
